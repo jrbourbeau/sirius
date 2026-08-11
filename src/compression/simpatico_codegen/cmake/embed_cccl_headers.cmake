@@ -19,7 +19,9 @@ if(NOT IS_DIRECTORY "${CCCL_DIR}")
     FATAL_ERROR "embed_cccl_headers: CCCL_DIR '${CCCL_DIR}' is not a directory")
 endif()
 
-# Union of the includes emitted by the encode + decode kernel preludes.
+# Union of the includes emitted by the encode + decode kernel preludes. CUDA 12
+# reaches execution_policy.h through a macro-expanded include, which the
+# literal-include scanner cannot discover, so seed it explicitly.
 set(roots
     cub/block/block_reduce.cuh
     cub/block/block_scan.cuh
@@ -27,7 +29,9 @@ set(roots
     cuda/std/cstdint
     cuda/std/cstddef
     cuda/std/climits
-    cuda/std/type_traits)
+    cuda/std/type_traits
+    thrust/system/cpp/detail/execution_policy.h
+    thrust/system/cuda/detail/execution_policy.h)
 
 set(worklist ${roots})
 set(found "")
